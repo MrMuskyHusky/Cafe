@@ -15,28 +15,14 @@ public class HoldItems : MonoBehaviour
 
     private void Start()
     {
-        item.GetComponent<Rigidbody>().useGravity = true;
+        
     }
 
     private void Update()
     {
-        if (Input.GetMouseButton(0))
-        {
-            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (!guide)
-            {
-                if (Physics.Raycast(ray, out hit) && hit.transform.tag == "Food" && Vector3.Distance(Camera.main.transform.position, hit.transform.position) < distance)
-                {
-                    // if it's a rigidbody, zero its physics velocity
-                    if (hit.rigidbody) hit.rigidbody.velocity = Vector3.zero;
-                    guide = hit.transform; // now there's an object picked
-                                           // remember its distance from the camera
-                    dist = Vector3.Distance(guide.position, Camera.main.transform.position);
-                }
-            }
-        }
+
     }
-    private void OnMouseDown()
+    void OnMouseDown()
     {
         item.GetComponent<Rigidbody>().useGravity = false;
         item.GetComponent<Rigidbody>().isKinematic = true;
@@ -44,12 +30,20 @@ public class HoldItems : MonoBehaviour
         item.transform.rotation = guide.transform.rotation;
         item.transform.parent = guide.transform.parent;
     }
-    private void OnMouseUp()
+
+    void OnTriggerEnter(Collider col)
     {
-        item.GetComponent<Rigidbody>().useGravity = true;
-        item.GetComponent<Rigidbody>().isKinematic = false;
-        item.transform.parent = null;
-        item.transform.position = guide.transform.position;
+        if (col.gameObject.tag == "Table" && item != null)
+        {
+            Debug.Log("Food Place On Table");
+            //Vector3 newPosition = col.gameObject.transform.position;
+            //newPosition = new Vector3(10, 10, 10);
+            // col.gameObject.transform.position = newPosition;
+
+            item.transform.position = col.transform.position + new Vector3(0,0.1f,0);
+            item.transform.rotation = col.transform.rotation;
+            item.transform.parent = null;
+        }
     }
 }
 
